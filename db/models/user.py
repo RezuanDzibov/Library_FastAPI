@@ -1,15 +1,13 @@
-import uuid
-
 import sqlalchemy_utils as sau
 from sqlalchemy import Column, String
 
 from db.base import BaseModel
+from db.models.base import UUIDMixin
 
 
-class User(BaseModel):
+class User(UUIDMixin, BaseModel):
     __tablename__ = 'user'
 
-    id = Column(sau.UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
     first_name = Column(String(length=255))
     last_name = Column(String(length=255))
     email = Column(sau.EmailType)
