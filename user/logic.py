@@ -10,9 +10,7 @@ from config import SECRET
 users = UserModel.__table__
 
 
-auth_backends = [
-    JWTAuthentication(secret=SECRET, lifetime_seconds=3600),
-]
+auth_backend = JWTAuthentication(secret=SECRET, lifetime_seconds=3600)
 
 
 async def get_user_db():

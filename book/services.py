@@ -20,14 +20,14 @@ async def get_book(book_id: str):
 async def insert_book(item: BookCreate):
     book = item.dict()
     book['id'] = await generate_uuid()
-    query = books.insert().values()
-    book = await database.fetch_one(query=query, values=book)
+    query = books.insert().values(**book)
+    book = await database.fetch_one(query=query)
     return book
 
 
 async def update_book(book_id: str, item: BookUpdate):
     book = books.update().where(books.c.id == book_id).values(**item.dict(exclude_unset=True))
-    result = await database.execute(book)
+    result = await database.fetch_one(book)
     return result
 
 

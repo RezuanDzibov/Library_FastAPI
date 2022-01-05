@@ -1,8 +1,8 @@
 import uuid
 
 from sqlalchemy import Column
-import sqlalchemy_utils as sau
+from sqlalchemy.dialects.postgresql import UUID
 
 
 class UUIDMixin:
-    id = Column(sau.UUIDType(binary=False), primary_key=True, default=uuid.uuid4)
+    id = Column(UUID, primary_key=True, default=uuid.uuid4)

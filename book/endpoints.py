@@ -5,7 +5,6 @@ from fastapi import APIRouter
 from book import services as book_services
 from book.schemas import BookUpdate, BookCreate
 
-
 router = APIRouter()
 
 

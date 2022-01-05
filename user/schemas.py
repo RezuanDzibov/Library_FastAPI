@@ -1,15 +1,27 @@
+import datetime
+
+from pydantic import BaseModel
 from fastapi_users import models
 
 
-class User(models.BaseUser):
+class AdditionalUser(BaseModel):
+    first_name: str
+    last_name: str
+    born_date: datetime.date
+
+    class Config:
+        allow_mutation = True
+
+
+class User(AdditionalUser, models.BaseUser):
     pass
 
 
-class UserCreate(models.BaseUserCreate):
+class UserCreate(AdditionalUser, models.BaseUserCreate):
     pass
 
 
-class UserUpdate(models.BaseUserUpdate):
+class UserUpdate(AdditionalUser, models.BaseUserUpdate):
     pass
 
 
