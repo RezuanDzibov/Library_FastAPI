@@ -1,35 +1,48 @@
-from book.models import books
-from book.schemas import BookUpdate, BookCreate
-from core.db import database
-from core.utils import generate_uuid
+from sqlalchemy import select, update
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from book.models import BookModel
+from book.schemas import BookUpdate, BookBase
 
 
-async def get_books(available):
-    query = books.select()
+async def get_books(session: AsyncSession, available: bool):
+    statement = select(BookModel)
     if available is not None:
-        query = query.where(books.c.available == available)
-    return await database.fetch_all(query)
+        statement = statement.where(BookModel.available == available)
+    books = await session.execute(statement)
+    books = books.scalars().all()
+    return books
 
 
-async def get_book(book_id: str):
-    query = books.select().where(books.c.id == book_id)
-    book = await database.fetch_one(query)
+async def get_book(session: AsyncSession, book_id: str):
+    statement = select(BookModel).where(BookModel.id == book_id)
+    book = await session.execute(statement)
+    book = book.scalar()
     return book
 
 
-async def insert_book(item: BookCreate):
-    book = item.dict()
-    book['id'] = await generate_uuid()
-    query = books.insert().values(**book)
-    book = await database.fetch_one(query=query)
+async def insert_book(session: AsyncSession, item: BookBase):
+    book = BookModel(**item.dict())
+    session.add(book)
+    await session.commit()
+    await session.refresh(book)
     return book
 
 
-async def update_book(book_id: str, item: BookUpdate):
-    book = books.update().where(books.c.id == book_id).values(**item.dict(exclude_unset=True))
-    result = await database.fetch_one(book)
-    return result
+async def update_book(session: AsyncSession, book_id: str, item: BookUpdate):
+    book = item.dict(exclude_unset=True)
+    statement = update(BookModel).where(BookModel.id == book_id).values(**book)
+    await session.execute(statement)
+    await session.commit()
+    statement = select(BookModel).where(BookModel.id == book_id)
+    book = await session.execute(statement)
+    book = book.scalar()
+    return book
 
 
-async def delete_book(book_id: str):
-    return await database.execute(books.delete().where(books.c.id == book_id))
+async def delete_book(session: AsyncSession, book_id: str):
+    statement = select(BookModel).where(BookModel.id == book_id)
+    book = await session.execute(statement)
+    book = book.scalar()
+    await session.delete(book)
+    await session.commit()

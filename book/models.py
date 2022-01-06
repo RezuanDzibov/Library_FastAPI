@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Boolean, DATE
 
 from core.db import BaseModel
 from core.models import UUIDMixin
@@ -9,8 +9,6 @@ class BookModel(UUIDMixin, BaseModel):
 
     name = Column(String)
     price = Column(Integer)
-    edition = Column(Integer)
+    edition = Column(String)
     available = Column(Boolean, default=True)
-
-
-books = BookModel.__table__
+    release_date = Column(DATE)

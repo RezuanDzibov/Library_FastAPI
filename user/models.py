@@ -1,5 +1,6 @@
 from fastapi_users.db import SQLAlchemyBaseUserTable
 from sqlalchemy import Column, String, DATE, ForeignKey, Integer
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from core.db import BaseModel
@@ -19,12 +20,12 @@ class UserModel(BaseModel, SQLAlchemyBaseUserTable):
 class AuthorModel(UUIDMixin, BaseModel):
     __tablename__ = 'author'
 
-    user_id = Column(Integer, ForeignKey('user.id'))
+    user_id = Column(UUID, ForeignKey('user.id'))
     user = relationship('UserModel', back_populates='author')
 
 
 class PublisherModel(UUIDMixin, BaseModel):
     __tablename__ = 'publisher'
 
-    user_id = Column(Integer, ForeignKey('user.id'))
+    user_id = Column(UUID, ForeignKey('user.id'))
     user = relationship('UserModel', back_populates='publisher')
