@@ -1,4 +1,4 @@
-from fastapi_users import FastAPIUsers
+from fastapi_users.fastapi_users import FastAPIUsers
 
 from user.managers import get_user_manager
 from user.logic import auth_backend

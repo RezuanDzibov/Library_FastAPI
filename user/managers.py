@@ -1,7 +1,8 @@
 from typing import Optional
 
 from fastapi import Depends
-from fastapi_users import BaseUserManager, models
+from fastapi_users import models
+from fastapi_users.manager import BaseUserManager
 from starlette.requests import Request
 
 from user.logic import get_user_db

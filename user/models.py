@@ -1,5 +1,5 @@
-from fastapi_users.db import SQLAlchemyBaseUserTable
-from sqlalchemy import Column, String, DATE, ForeignKey, Integer
+from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
+from sqlalchemy import Column, String, DATE, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 

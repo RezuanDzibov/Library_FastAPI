@@ -1,5 +1,5 @@
-from fastapi_users.authentication import JWTAuthentication
-from fastapi_users.db import SQLAlchemyUserDatabase
+from fastapi_users.authentication.jwt import JWTAuthentication
+from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 
 from core.db import database
 from user.models import UserModel

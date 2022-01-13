@@ -1,13 +1,12 @@
-import uuid
 from datetime import date
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, PositiveInt, UUID4
 
 
 class BookBase(BaseModel):
     name: str
-    price: int
+    price: PositiveInt
     available: bool = True
     edition: str
     release_date: date
@@ -18,7 +17,7 @@ class BookBase(BaseModel):
 
 
 class BookRetrieve(BookBase):
-    id: uuid.UUID
+    id: UUID4
 
 
 class BookUpdate(BookBase):
