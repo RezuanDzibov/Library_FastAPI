@@ -6,7 +6,7 @@ from user.schemas import UserCreate, UserUpdate, UserDB, User
 
 
 fastapi_users = FastAPIUsers(
-    get_user_manager,
+    get_user_manager,   # type: ignore
     [auth_backend],
     User,
     UserCreate,

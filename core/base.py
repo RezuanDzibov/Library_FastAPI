@@ -1,3 +1,3 @@
 from core.db import BaseModel
-from book.models import BookModel
-from user.models import UserModel, AuthorModel, PublisherModel
+from book.models import Book
+from user.models import User
