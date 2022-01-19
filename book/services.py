@@ -1,4 +1,5 @@
 from typing import Union
+from unittest import result
 from uuid import UUID
 
 from fastapi import HTTPException
@@ -30,11 +31,14 @@ async def get_book(session: AsyncSession, book_id: UUID):
         joinedload(Book.user).load_only(User.first_name, User.last_name)
     )
     statement = statement.where(Book.id == book_id)
-    book = await session.execute(statement)
-    book = book.one()
-    book = extract_object(object=book)
-    return book
-
+    result = await session.execute(statement)
+    try: 
+        book = result.one()
+        book = extract_object(object=book)
+        return book
+    except NoResultFound:
+        raise HTTPException(status_code=404, detail=f'There is no book with this ID: {book_id}')
+        
 
 async def insert_book(session: AsyncSession, item: BookCreateIn, user_id: UUID):
     book = item.dict()
@@ -49,18 +53,21 @@ async def insert_book(session: AsyncSession, item: BookCreateIn, user_id: UUID):
 async def update_book(session: AsyncSession, book_id: UUID, item: BookUpdate):
     item = item.dict(exclude_unset=True)   # type: ignore
     statement = update(Book).where(Book.id == book_id).values(**item).returning('*')   # type: ignore
-    book = await session.execute(statement)
-    await session.commit()
-    book = book.one()
-    return book
+    try: 
+        result = await session.execute(statement)
+        await session.commit()
+        book = result.one()
+        return book
+    except NoResultFound:
+        raise HTTPException(status_code=404, detail=f'There is no book with this ID: {book_id}')
 
 
 async def delete_book(session: AsyncSession, book_id: UUID):
+    statement = delete(Book).where(Book.id == book_id).returning('*')   # type: ignore
     try:
-        statement = delete(Book).where(Book.id == book_id).returning('*')   # type: ignore
-        book = await session.execute(statement)
+        result = await session.execute(statement)
         await session.commit()
-        book = book.one()
+        book = result.one()
         return book
     except NoResultFound:
-        raise HTTPException(status_code=404, detail='Book not found.')
+        raise HTTPException(status_code=404, detail=f'There is no book with this ID: {book_id}')
