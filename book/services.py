@@ -50,9 +50,9 @@ async def insert_book(session: AsyncSession, item: BookCreateIn, user_id: UUID):
     return book
 
 
-async def update_book(session: AsyncSession, book_id: UUID, item: BookUpdate):
+async def update_book(session: AsyncSession, book_id: UUID, item: BookUpdate, user_id: UUID):
     item = item.dict(exclude_unset=True)   # type: ignore
-    statement = update(Book).where(Book.id == book_id).values(**item).returning('*')   # type: ignore
+    statement = update(Book).where(Book.id == book_id, Book.user_id == user_id.hex).values(**item).returning('*')   # type: ignore
     try: 
         result = await session.execute(statement)
         await session.commit()

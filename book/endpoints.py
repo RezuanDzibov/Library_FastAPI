@@ -40,8 +40,13 @@ async def book_create(
 
 
 @router.patch('/update/{book_id}')
-async def update_book(book_id: UUID, item: BookUpdate, session: AsyncSession = Depends(get_session)):
-    book = await book_services.update_book(session=session, book_id=book_id, item=item)
+async def update_book(
+    book_id: UUID, 
+    item: BookUpdate, 
+    session: AsyncSession = Depends(get_session),
+    user: User = Depends(current_user)
+):
+    book = await book_services.update_book(session=session, book_id=book_id, item=item, user_id=user.id)
     return book
 
 
