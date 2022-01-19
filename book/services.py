@@ -44,9 +44,9 @@ async def insert_book(session: AsyncSession, item: BookCreateIn, user_id: UUID):
     book = item.dict()
     book['user_id'] = user_id.hex
     statement = insert(Book).values(book).returning('*')  # type: ignore 
-    book = await session.execute(statement)
+    result = await session.execute(statement)
     await session.commit()
-    book = book.one()
+    book = result.one()
     return book
 
 
