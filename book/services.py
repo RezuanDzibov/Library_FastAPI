@@ -1,29 +1,27 @@
 from typing import Union
 from uuid import UUID
 
+from fastapi import HTTPException
 from sqlalchemy import select, update, insert, delete
 from sqlalchemy.exc import NoResultFound   # type: ignore
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Load, joinedload
-from fastapi import HTTPException
+from fastapi_pagination.ext.async_sqlalchemy import paginate
 
 from book.models import Book
 from book.schemas import BookCreateIn, BookUpdate
 from user.models import User
-from utils import extract_objects, extract_object
+from utils import extract_object
 
 
-async def get_books(session: AsyncSession, available: Union[bool, None], limit: int):
+async def get_books(session: AsyncSession, available: Union[bool, None]):
     statement = select(Book).options(   # type: ignore
         Load(Book).load_only(Book.id, Book.name, Book.price, Book.available),   # type: ignore
         joinedload(Book.user).load_only(User.first_name, User.last_name)
     )
-    statement = statement.limit(limit)
     if available is not None:
         statement = statement.where(Book.available == available) #type: ignore
-    books = await session.execute(statement)
-    books = books.all()
-    books = extract_objects(objects=books)
+    books = await paginate(session=session, query=statement)
     return books
 
 

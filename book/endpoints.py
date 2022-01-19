@@ -1,8 +1,9 @@
-from typing import Optional, List
+from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi_pagination import Page, LimitOffsetPage
 
 from user.schemas import User
 from user.fast_users import fastapi_users
@@ -13,15 +14,12 @@ from core.db import get_session
 
 router = APIRouter()
 current_user = fastapi_users.current_user(active=True, verified=True)
-
-
-@router.get('', response_model=List[BookList])
-async def book_list(
-    session: AsyncSession = Depends(get_session), 
-    available: Optional[bool] = None, 
-    limit: int = 20
-):
-    books = await book_services.get_books(session=session, available=available, limit=limit)
+ 
+ 
+@router.get('', response_model = Page[BookList])
+@router.get('/limit-offset', response_model = LimitOffsetPage[BookList])
+async def book_list(session: AsyncSession = Depends(get_session), available: Optional[bool] = None):
+    books = await book_services.get_books(session=session, available=available)
     return books
 
 
