@@ -1,8 +1,11 @@
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 
 BASE_DIR = Path(__file__).parent
+load_dotenv(dotenv_path=Path(f"{BASE_DIR}/.env"))
 
 SECRET = os.environ.get('SECRET')
 
