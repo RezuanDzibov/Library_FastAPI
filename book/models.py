@@ -15,6 +15,7 @@ from sqlalchemy.sql import func
 
 from core.db import BaseModel
 from core.models import UUIDMixin
+from image.models import BookImage
 
 
 class Book(UUIDMixin, BaseModel): #type: ignore
