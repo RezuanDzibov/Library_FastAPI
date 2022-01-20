@@ -17,9 +17,8 @@ from core.models import UUIDMixin
 class ImageMixin:
     title = Column(String(length=255))
     available = Column(Boolean, default=True)
-    created = Column(DateTime, default=datetime.now)
+    created = Column(DateTime, default=datetime.now) # TODO created_at
     image_path = Column(String)
-
 
 
 class BookImage(UUIDMixin, ImageMixin, BaseModel):   # type: ignore

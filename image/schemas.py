@@ -1,5 +1,7 @@
+from datetime import datetime
+
 from fastapi import UploadFile, Form
-from pydantic import BaseModel, UUID4, constr
+from pydantic import BaseModel, UUID4, constr, validator
 
 
 class BookImageCreate(BaseModel):
@@ -16,4 +18,18 @@ class BookImageCreate(BaseModel):
         available: bool = Form(...),
         file: UploadFile = Form(...)
     ):
-        return cls(book_id=book_id, title=title, available=available, file=file)    
+        return cls(book_id=book_id, title=title, available=available, file=file)
+
+
+class BookImageRetrieve(BaseModel):
+    id: UUID4
+    book_id: UUID4
+    title: str
+    available: bool
+    created: datetime
+    
+    class Config:
+        orm_mode = True
+        json_encoders = {
+            datetime: lambda v: v.strftime("%Y-%m-%d %H:%M:%S")
+        }

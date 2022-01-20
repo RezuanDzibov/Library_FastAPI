@@ -12,6 +12,6 @@ def extract_objects(objects: tuple):
         yield object_tuple[0]
         
 
-def write_file(file: UploadFile = File(...)):
-    with open(f'{file.filename}', 'wb') as buffer:
+def write_file(filepath, file: UploadFile = File(...)):
+    with open(filepath, 'wb') as buffer:
         shutil.copyfileobj(file.file, buffer)
