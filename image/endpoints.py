@@ -1,4 +1,6 @@
+from uuid import UUID
 from fastapi import APIRouter, Depends, BackgroundTasks
+from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.db import get_session
@@ -21,3 +23,9 @@ async def create_image(
         form=form
     )
     return image
+
+
+@router.get('/{image_id}')
+async def image_retrieve(image_id: UUID, session: AsyncSession = Depends(get_session)):
+    image_path = await image_services.get_image(session=session, image_id=image_id)
+    return FileResponse(image_path)
