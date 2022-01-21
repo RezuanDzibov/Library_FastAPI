@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from fastapi import UploadFile, Form
-from pydantic import BaseModel, UUID4, constr, validator
+from pydantic import BaseModel, UUID4, constr
 
 
 class BookImageCreate(BaseModel):
@@ -33,3 +33,11 @@ class BookImageRetrieve(BaseModel):
         json_encoders = {
             datetime: lambda v: v.strftime("%Y-%m-%d %H:%M:%S")
         }
+        
+
+class BookImageList(BaseModel):
+    id: UUID4
+    title: constr(max_length=255)   # type: ignore
+    
+    class Config:
+        orm_mode = True

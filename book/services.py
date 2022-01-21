@@ -6,12 +6,13 @@ from fastapi import HTTPException
 from sqlalchemy import select, update, insert, delete
 from sqlalchemy.exc import NoResultFound   # type: ignore
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Load, joinedload
+from sqlalchemy.orm import Load, joinedload, subqueryload
 from fastapi_pagination.ext.async_sqlalchemy import paginate
 
 from book.models import Book
 from book.schemas import BookCreateIn, BookUpdate
 from user.models import User
+from image.models import BookImage
 from utils import extract_object
 
 
@@ -28,7 +29,8 @@ async def get_books(session: AsyncSession, available: Union[bool, None]):
 
 async def get_book(session: AsyncSession, book_id: UUID):
     statement = select(Book).options(   # type: ignore
-        joinedload(Book.user).load_only(User.first_name, User.last_name)
+        joinedload(Book.user).load_only(User.first_name, User.last_name),
+        subqueryload(Book.images).load_only(BookImage.id, BookImage.title)
     )
     statement = statement.where(Book.id == book_id)
     result = await session.execute(statement)

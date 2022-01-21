@@ -1,11 +1,12 @@
 from datetime import date
-from typing import Optional, Union
+from typing import Optional, Union, List
 from uuid import UUID
 
 from pydantic import BaseModel, PositiveInt, constr
 from typing_extensions import Literal
 
 from user.schemas import UserBook
+from image.schemas import BookImageList
 
 
 LanguageChoice = Union[
@@ -35,6 +36,7 @@ class BookRetrieve(BookList):
     language: str
     pages: int
     user: UserBook
+    images: List[BookImageList]
 
 
 class BookCreateIn(BaseModel):
