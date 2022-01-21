@@ -37,7 +37,7 @@ async def insert_image(
 
 
 async def get_image(session: AsyncSession, image_id: UUID):
-    statement = select(BookImage).options(load_only('image_path'))   # type: ignore
+    statement = select(BookImage).options(load_only(BookImage.image_path))   # type: ignore
     statement = statement.where(BookImage.id == image_id)
     result = await session.execute(statement)
     try:
@@ -45,5 +45,25 @@ async def get_image(session: AsyncSession, image_id: UUID):
         image = extract_object(object=image)
         image_path = image.image_path
         return image_path
+    except NoResultFound:
+        raise HTTPException(status_code=404, detail=f'There is no image with this ID: {image_id}')
+    
+
+async def get_image_info(session: AsyncSession, image_id: UUID):
+    statement = select(BookImage).options(   # type: ignore
+        load_only(
+            BookImage.id, 
+            BookImage.book_id,
+            BookImage.title,
+            BookImage.available,
+            BookImage.created
+        )
+    )
+    statement = statement.where(BookImage.id == image_id)
+    result = await session.execute(statement)
+    try:
+        image = result.one()
+        image = extract_object(object=image)
+        return image
     except NoResultFound:
         raise HTTPException(status_code=404, detail=f'There is no image with this ID: {image_id}')

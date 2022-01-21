@@ -24,7 +24,7 @@ class BookImageCreate(BaseModel):
 class BookImageRetrieve(BaseModel):
     id: UUID4
     book_id: UUID4
-    title: str
+    title: constr(max_length=255)   # type: ignore
     available: bool
     created: datetime
     
