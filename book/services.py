@@ -29,7 +29,7 @@ async def get_books(session: AsyncSession, available: Union[bool, None]):
 async def get_book(session: AsyncSession, book_id: UUID):
     statement = select(Book).options(   # type: ignore
         joinedload(Book.user).load_only(User.first_name, User.last_name),
-        subqueryload(Book.images).load_only(BookImage.id, BookImage.title)
+        subqueryload(Book.images.and_(BookImage.available == True)).load_only(BookImage.id, BookImage.title)
     )
     statement = statement.where(Book.id == book_id)
     result = await session.execute(statement)
