@@ -12,7 +12,7 @@ from book.models import Book
 from book.schemas import BookCreateIn, BookUpdate
 from user.models import User
 from image.models import BookImage
-from utils import extract_object
+from core.utils import extract_object
 
 
 async def get_books(session: AsyncSession, available: Union[bool, None]):

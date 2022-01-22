@@ -35,3 +35,9 @@ async def image_retrieve(image_id: UUID, session: AsyncSession = Depends(get_ses
 async def image_retrieve_info(image_id: UUID, session: AsyncSession = Depends(get_session)):
     image = await image_services.get_image_info(session=session, image_id=image_id)
     return image
+
+
+@router.delete('/{image_id}', response_model=BookImageRetrieve)
+async def image_delete(image_id: UUID, background_tasks: BackgroundTasks, session: AsyncSession = Depends(get_session)):
+    image = await image_services.delete_image(session=session, background_tasks=background_tasks, image_id=image_id)
+    return image

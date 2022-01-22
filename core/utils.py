@@ -1,3 +1,4 @@
+import os
 import shutil
 
 from fastapi import UploadFile, File
@@ -15,3 +16,10 @@ def extract_objects(objects: tuple):
 def write_file(filepath, file: UploadFile = File(...)):
     with open(filepath, 'wb') as buffer:
         shutil.copyfileobj(file.file, buffer)
+        
+        
+def delete_file(filepath: str):
+    try:
+        os.remove(filepath)
+    except FileNotFoundError:
+        pass

@@ -1,14 +1,14 @@
 from uuid import UUID
 
 from fastapi import Depends, BackgroundTasks, HTTPException
-from sqlalchemy import insert, select
+from sqlalchemy import insert, select, delete
 from sqlalchemy.orm import load_only
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import NoResultFound   # type: ignore
 
 from image.schemas import BookImageCreate
 from image.models import BookImage
-from utils import write_file, extract_object
+from core.utils import write_file, extract_object, delete_file
 
 
 async def insert_image(
@@ -64,6 +64,18 @@ async def get_image_info(session: AsyncSession, image_id: UUID):
     try:
         image = result.one()
         image = extract_object(object=image)
+        return image
+    except NoResultFound:
+        raise HTTPException(status_code=404, detail=f'There is no image with this ID: {image_id}')
+    
+
+async def delete_image(session: AsyncSession, background_tasks: BackgroundTasks, image_id: UUID):
+    statement = delete(BookImage).where(BookImage.id == image_id).returning('*') # type: ignore
+    try: 
+        result = await session.execute(statement)
+        await session.commit()
+        image= result.one()
+        background_tasks.add_task(delete_file, image.image_path)
         return image
     except NoResultFound:
         raise HTTPException(status_code=404, detail=f'There is no image with this ID: {image_id}')
