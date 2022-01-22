@@ -72,3 +72,17 @@ async def delete_book(session: AsyncSession, book_id: UUID):
         return book
     except NoResultFound:
         raise HTTPException(status_code=404, detail=f'There is no book with this ID: {book_id}')
+    
+
+async def get_book_user_id(session: AsyncSession, book_id: UUID):
+    statement = select(Book).options(   # type: ignore
+        Load(Book).load_only(Book.user_id),   # type: ignore
+    )
+    statement = statement.where(Book.id == book_id)
+    result = await session.execute(statement)
+    try: 
+        book = result.one()
+        book = extract_object(object=book)
+        return book
+    except NoResultFound:
+        raise HTTPException(status_code=404, detail=f'There is no book with this ID: {book_id}')

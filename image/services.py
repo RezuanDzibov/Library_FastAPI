@@ -6,16 +6,22 @@ from sqlalchemy.orm import load_only
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import NoResultFound   # type: ignore
 
+from book import services as book_services
 from image.schemas import BookImageCreate
 from image.models import BookImage
 from core.utils import write_file, extract_object, delete_file
+from user.schemas import User
 
 
 async def insert_image(
     session: AsyncSession,
-    background_tasks: BackgroundTasks, 
+    background_tasks: BackgroundTasks,
+    user: User,
     form: BookImageCreate = Depends(BookImageCreate.as_form)
-):
+): 
+    book = await book_services.get_book_user_id(session=session, book_id=form.book_id)
+    if book.user_id != str(user.id):
+        raise HTTPException(status_code=203, detail=f"Book with ID: {form.book_id.hex} doesn't belong you.")
     file = form.file
     filepath = f"media/{file.filename}"
     form_data = form.dict()

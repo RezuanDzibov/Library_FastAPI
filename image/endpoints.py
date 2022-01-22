@@ -4,23 +4,28 @@ from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.db import get_session
+from user.fast_users import fastapi_users
+from user.schemas import User
 from image.schemas import BookImageCreate, BookImageRetrieve
 from image import services as image_services
 
 
 router = APIRouter()
+current_user = fastapi_users.current_user(active=True, verified=True)
 
 
 @router.post('/create', response_model=BookImageRetrieve)
 async def create_image(
     background_tasks: BackgroundTasks, 
     form: BookImageCreate = Depends(BookImageCreate.as_form), 
-    session: AsyncSession = Depends(get_session)
+    session: AsyncSession = Depends(get_session),
+    user: User = Depends(current_user)
 ):
     image = await image_services.insert_image(
         session=session, 
         background_tasks=background_tasks, 
-        form=form
+        form=form,
+        user=user
     )
     return image
 
