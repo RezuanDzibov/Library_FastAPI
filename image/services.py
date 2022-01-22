@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import UUID
 
 from fastapi import Depends, BackgroundTasks, HTTPException
@@ -9,7 +10,7 @@ from sqlalchemy.exc import NoResultFound   # type: ignore
 from book import services as book_services
 from image.schemas import BookImageCreate
 from image.models import BookImage
-from core.utils import write_file, extract_object, delete_file
+from core.utils import write_file, extract_object, delete_file, get_file_path
 from user.schemas import User
 
 
@@ -23,7 +24,7 @@ async def insert_image(
     if book.user_id != str(user.id):
         raise HTTPException(status_code=203, detail=f"Book with ID: {form.book_id.hex} doesn't belong you.")
     file = form.file
-    filepath = f"media/{file.filename}"
+    filepath = f'media/{get_file_path(filename=file.filename)}'
     form_data = form.dict()
     form_data['book_id'] = form_data['book_id'].hex
     form_data['image_path'] = filepath

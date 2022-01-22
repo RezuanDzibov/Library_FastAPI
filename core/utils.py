@@ -1,5 +1,6 @@
 import os
 import shutil
+from datetime import datetime
 
 from fastapi import UploadFile, File
 
@@ -23,3 +24,9 @@ def delete_file(filepath: str):
         os.remove(filepath)
     except FileNotFoundError:
         pass
+    
+    
+def get_file_path(filename):
+    current_datetime = '-'.join(str(datetime.now()).split(' ')).replace(':', '-').replace('.', '-')
+    filepath = f'{current_datetime}_{filename}'
+    return filepath
