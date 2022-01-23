@@ -42,7 +42,19 @@ async def image_picture_retrieve(image_id: UUID, session: AsyncSession = Depends
     return FileResponse(image_path)
 
 
-@router.delete('/{image_id}', response_model=BookImageRetrieve)
-async def image_delete(image_id: UUID, background_tasks: BackgroundTasks, session: AsyncSession = Depends(get_session)):
-    image = await image_services.delete_image(session=session, background_tasks=background_tasks, image_id=image_id)
+@router.delete('/delete/{book_id}/{image_id}', response_model=BookImageRetrieve, status_code=204)
+async def image_delete(
+    book_id: UUID,
+    image_id: UUID, 
+    background_tasks: BackgroundTasks, 
+    session: AsyncSession = Depends(get_session),
+    user: User = Depends(current_user)
+):
+    image = await image_services.delete_image(
+        session=session, 
+        background_tasks=background_tasks, 
+        image_id=image_id,
+        book_id=book_id,
+        user_id=str(user.id)
+)
     return image
