@@ -1,4 +1,5 @@
 from uuid import UUID
+
 from fastapi import APIRouter, Depends, BackgroundTasks
 from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,6 +9,8 @@ from user.fast_users import fastapi_users
 from user.schemas import User
 from image.schemas import BookImageCreate, BookImageRetrieve, AvatarImageCreate
 from image import services as image_services
+from image.models import AvatarImage, BookImage
+from image.dataclasses import ImageType
 
 
 router = APIRouter()
@@ -36,9 +39,12 @@ async def book_image_retrieve(image_id: UUID, session: AsyncSession = Depends(ge
     return image
 
 
-@router.get('/picture/{image_id}')
-async def book_image_picture_retrieve(image_id: UUID, session: AsyncSession = Depends(get_session)):
-    image_path = await image_services.get_book_image_picture(session=session, image_id=image_id)
+@router.get('/picture/{image_type}/{image_id}')
+async def book_image_picture_retrieve(image_id: UUID, image_type: ImageType, session: AsyncSession = Depends(get_session)):
+    if image_type == ImageType.avatar:
+        image_path = await image_services.get_book_image_picture(session=session, image_id=image_id, image_model=AvatarImage)
+    elif image_type == ImageType.book:
+        image_path = await image_services.get_book_image_picture(session=session, image_id=image_id, image_model=BookImage)
     return FileResponse(image_path)
 
 

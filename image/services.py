@@ -1,4 +1,5 @@
 from uuid import UUID
+from typing import Union
 
 from fastapi import Depends, BackgroundTasks, HTTPException
 from sqlalchemy import insert, select, delete
@@ -8,7 +9,7 @@ from sqlalchemy.exc import NoResultFound   # type: ignore
 
 from book import services as book_services
 from image.schemas import BookImageCreate, AvatarImageCreate
-from image.models import BookImage, AvatarImage
+from image.models import BookImage, AvatarImage, ImageMixin
 from core.utils import write_file, extract_object, delete_file, get_file_path
 
 
@@ -41,9 +42,9 @@ async def insert_book_image(
     return image
 
 
-async def get_book_image_picture(session: AsyncSession, image_id: UUID):
-    statement = select(BookImage).options(load_only(BookImage.image_path))   # type: ignore
-    statement = statement.where(BookImage.id == image_id)
+async def get_book_image_picture(session: AsyncSession, image_id: UUID, image_model: Union[BookImage, AvatarImage]):
+    statement = select(image_model).options(load_only(image_model.image_path))   # type: ignore
+    statement = statement.where(image_model.id == image_id)
     result = await session.execute(statement)
     try:
         image = result.one()
