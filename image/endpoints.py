@@ -30,16 +30,16 @@ async def create_image(
     return image
 
 
-@router.get('/{image_id}')
+@router.get('/{image_id}', response_model=BookImageRetrieve)
 async def image_retrieve(image_id: UUID, session: AsyncSession = Depends(get_session)):
-    image_path = await image_services.get_image(session=session, image_id=image_id)
-    return FileResponse(image_path)
-
-
-@router.get('/info/{image_id}', response_model=BookImageRetrieve)
-async def image_retrieve_info(image_id: UUID, session: AsyncSession = Depends(get_session)):
     image = await image_services.get_image_info(session=session, image_id=image_id)
     return image
+
+
+@router.get('/picture/{image_id}')
+async def image_picture_retrieve(image_id: UUID, session: AsyncSession = Depends(get_session)):
+    image_path = await image_services.get_image(session=session, image_id=image_id)
+    return FileResponse(image_path)
 
 
 @router.delete('/{image_id}', response_model=BookImageRetrieve)
