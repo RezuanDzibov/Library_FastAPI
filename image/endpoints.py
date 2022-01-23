@@ -21,7 +21,7 @@ async def create_image(
     session: AsyncSession = Depends(get_session),
     user: User = Depends(current_user)
 ):
-    image = await image_services.insert_image(
+    image = await image_services.inaert_book_image(
         session=session, 
         background_tasks=background_tasks, 
         form=form,
@@ -32,13 +32,13 @@ async def create_image(
 
 @router.get('/{image_id}', response_model=BookImageRetrieve)
 async def image_retrieve(image_id: UUID, session: AsyncSession = Depends(get_session)):
-    image = await image_services.get_image_info(session=session, image_id=image_id)
+    image = await image_services.get_book_image(session=session, image_id=image_id)
     return image
 
 
 @router.get('/picture/{image_id}')
 async def image_picture_retrieve(image_id: UUID, session: AsyncSession = Depends(get_session)):
-    image_path = await image_services.get_image(session=session, image_id=image_id)
+    image_path = await image_services.get_book_image_picture(session=session, image_id=image_id)
     return FileResponse(image_path)
 
 
@@ -50,7 +50,7 @@ async def image_delete(
     session: AsyncSession = Depends(get_session),
     user: User = Depends(current_user)
 ):
-    image = await image_services.delete_image(
+    image = await image_services.delete_book_image(
         session=session, 
         background_tasks=background_tasks, 
         image_id=image_id,

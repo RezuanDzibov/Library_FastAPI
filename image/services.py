@@ -13,7 +13,7 @@ from image.models import BookImage
 from core.utils import write_file, extract_object, delete_file, get_file_path
 
 
-async def insert_image(
+async def inaert_book_image(
     session: AsyncSession,
     background_tasks: BackgroundTasks,
     user_id: str,
@@ -42,7 +42,7 @@ async def insert_image(
     return image
 
 
-async def get_image(session: AsyncSession, image_id: UUID):
+async def get_book_image_picture(session: AsyncSession, image_id: UUID):
     statement = select(BookImage).options(load_only(BookImage.image_path))   # type: ignore
     statement = statement.where(BookImage.id == image_id)
     result = await session.execute(statement)
@@ -55,7 +55,7 @@ async def get_image(session: AsyncSession, image_id: UUID):
         raise HTTPException(status_code=404, detail=f'There is no image with this ID: {image_id}')
     
 
-async def get_image_info(session: AsyncSession, image_id: UUID):
+async def get_book_image(session: AsyncSession, image_id: UUID):
     statement = select(BookImage).options(   # type: ignore
         load_only(
             BookImage.id, 
@@ -75,7 +75,7 @@ async def get_image_info(session: AsyncSession, image_id: UUID):
         raise HTTPException(status_code=404, detail=f'There is no image with this ID: {image_id}')
     
 
-async def delete_image(session: AsyncSession, background_tasks: BackgroundTasks, image_id: UUID, book_id, user_id: str):
+async def delete_book_image(session: AsyncSession, background_tasks: BackgroundTasks, image_id: UUID, book_id, user_id: str):
     book = await book_services.get_book_user_id(session=session, book_id=book_id)
     if book.user_id != user_id:
         raise HTTPException(status_code=203, detail=f"Book with ID: {book_id.hex} doesn't belong you.")
