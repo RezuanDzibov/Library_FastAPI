@@ -25,7 +25,7 @@ async def create_image(
         session=session, 
         background_tasks=background_tasks, 
         form=form,
-        user=user
+        user_id=str(user.id)
     )
     return image
 

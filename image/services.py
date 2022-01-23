@@ -11,17 +11,16 @@ from book import services as book_services
 from image.schemas import BookImageCreate
 from image.models import BookImage
 from core.utils import write_file, extract_object, delete_file, get_file_path
-from user.schemas import User
 
 
 async def insert_image(
     session: AsyncSession,
     background_tasks: BackgroundTasks,
-    user: User,
+    user_id: str,
     form: BookImageCreate = Depends(BookImageCreate.as_form)
 ): 
     book = await book_services.get_book_user_id(session=session, book_id=form.book_id)
-    if book.user_id != str(user.id):
+    if book.user_id != user_id:
         raise HTTPException(status_code=203, detail=f"Book with ID: {form.book_id.hex} doesn't belong you.")
     file = form.file
     filepath = f'media/{get_file_path(filename=file.filename)}'
