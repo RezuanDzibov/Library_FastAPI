@@ -21,7 +21,7 @@ async def create_image(
     session: AsyncSession = Depends(get_session),
     user: User = Depends(current_user)
 ):
-    image = await image_services.inaert_book_image(
+    image = await image_services.insert_book_image(
         session=session, 
         background_tasks=background_tasks, 
         form=form,

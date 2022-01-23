@@ -13,7 +13,7 @@ from image.models import BookImage
 from core.utils import write_file, extract_object, delete_file, get_file_path
 
 
-async def inaert_book_image(
+async def insert_book_image(
     session: AsyncSession,
     background_tasks: BackgroundTasks,
     user_id: str,

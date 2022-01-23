@@ -26,3 +26,10 @@ class BookImage(UUIDMixin, ImageMixin, BaseModel):   # type: ignore
     
     book_id = Column(UUID, ForeignKey('book.id'))
     book = relationship('Book', back_populates='images')
+    
+
+class AvatarImage(UUIDMixin, ImageMixin, BaseModel):   # type: ignore
+    __tablename__ = 'user_avatar_image'
+    
+    user_id = Column(UUID, ForeignKey('user.id'))
+    user = relationship('User', back_populates='avatars')
