@@ -1,4 +1,3 @@
-from datetime import datetime
 from uuid import UUID
 
 from fastapi import Depends, BackgroundTasks, HTTPException
@@ -8,8 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import NoResultFound   # type: ignore
 
 from book import services as book_services
-from image.schemas import BookImageCreate
-from image.models import BookImage
+from image.schemas import BookImageCreate, AvatarImageCreate
+from image.models import BookImage, AvatarImage
 from core.utils import write_file, extract_object, delete_file, get_file_path
 
 
@@ -88,3 +87,30 @@ async def delete_book_image(session: AsyncSession, background_tasks: BackgroundT
         return image
     except NoResultFound:
         raise HTTPException(status_code=404, detail=f'There is no image with this ID: {image_id}')
+    
+    
+
+async def insert_avatar_image(
+    session: AsyncSession,
+    background_tasks: BackgroundTasks,
+    user_id: str,
+    form: AvatarImageCreate = Depends(AvatarImageCreate.as_form)
+):
+    file = form.file
+    filepath = f'media/{get_file_path(filename=file.filename)}'
+    form_data = form.dict()
+    form_data['user_id'] = user_id
+    form_data['image_path'] = filepath
+    del form_data['file']
+    statement = insert(AvatarImage).values(form_data).returning(
+        AvatarImage.id, 
+        AvatarImage.user_id, 
+        AvatarImage.title,
+        AvatarImage.available, 
+        AvatarImage.created
+    )
+    result = await session.execute(statement)
+    await session.commit()
+    image = result.one()
+    background_tasks.add_task(write_file, filepath, file)
+    return image

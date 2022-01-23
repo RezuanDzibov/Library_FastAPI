@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.db import get_session
 from user.fast_users import fastapi_users
 from user.schemas import User
-from image.schemas import BookImageCreate, BookImageRetrieve
+from image.schemas import BookImageCreate, BookImageRetrieve, AvatarImageCreate
 from image import services as image_services
 
 
@@ -14,8 +14,8 @@ router = APIRouter()
 current_user = fastapi_users.current_user(active=True, verified=True)
 
 
-@router.post('/create', response_model=BookImageRetrieve)
-async def create_image(
+@router.post('/book/create', response_model=BookImageRetrieve)
+async def book_image_create(
     background_tasks: BackgroundTasks, 
     form: BookImageCreate = Depends(BookImageCreate.as_form), 
     session: AsyncSession = Depends(get_session),
@@ -31,19 +31,19 @@ async def create_image(
 
 
 @router.get('/{image_id}', response_model=BookImageRetrieve)
-async def image_retrieve(image_id: UUID, session: AsyncSession = Depends(get_session)):
+async def book_image_retrieve(image_id: UUID, session: AsyncSession = Depends(get_session)):
     image = await image_services.get_book_image(session=session, image_id=image_id)
     return image
 
 
 @router.get('/picture/{image_id}')
-async def image_picture_retrieve(image_id: UUID, session: AsyncSession = Depends(get_session)):
+async def book_image_picture_retrieve(image_id: UUID, session: AsyncSession = Depends(get_session)):
     image_path = await image_services.get_book_image_picture(session=session, image_id=image_id)
     return FileResponse(image_path)
 
 
-@router.delete('/delete/{book_id}/{image_id}', response_model=BookImageRetrieve, status_code=204)
-async def image_delete(
+@router.delete('/delete/{book_id}/{image_id}', response_model=BookImageRetrieve)
+async def book_image_delete(
     book_id: UUID,
     image_id: UUID, 
     background_tasks: BackgroundTasks, 
@@ -57,4 +57,20 @@ async def image_delete(
         book_id=book_id,
         user_id=str(user.id)
 )
+    return image
+
+
+@router.post('/avatar/create')
+async def avatar_image_create(
+    background_tasks: BackgroundTasks, 
+    form: AvatarImageCreate = Depends(AvatarImageCreate.as_form), 
+    session: AsyncSession = Depends(get_session),
+    user: User = Depends(current_user)
+):
+    image = await image_services.insert_avatar_image(
+        session=session, 
+        background_tasks=background_tasks, 
+        form=form,
+        user_id=str(user.id)
+    )
     return image

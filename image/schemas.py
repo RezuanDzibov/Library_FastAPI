@@ -40,4 +40,19 @@ class BookImageList(BaseModel):
     title: constr(max_length=255)   # type: ignore
     
     class Config:
-        orm_mode = True
+        orm_mode = True  
+        
+
+class AvatarImageCreate(BaseModel):
+    title: constr(max_length=255) = ''  # type: ignore
+    available: bool = True
+    file: UploadFile
+    
+    @classmethod
+    def as_form(
+        cls, 
+        title: constr(max_length=255) = Form(...),   # type: ignore
+        available: bool = Form(...),
+        file: UploadFile = Form(...)
+    ):
+        return cls(title=title, available=available, file=file)
