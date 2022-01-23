@@ -60,18 +60,18 @@ async def update_book(session: AsyncSession, book_id: UUID, item: BookUpdate, us
         book = result.one()
         return book
     except NoResultFound:
-        raise HTTPException(status_code=404, detail=f'There is no book with this ID: {book_id}')
+        raise HTTPException(status_code=404, detail=f'There is no book with this ID: {book_id} which belongs you')
 
 
-async def delete_book(session: AsyncSession, book_id: UUID):
-    statement = delete(Book).where(Book.id == book_id).returning('*')   # type: ignore
+async def delete_book(session: AsyncSession, book_id: UUID, user_id: UUID):
+    statement = delete(Book).where(Book.id == book_id, Book.user_id == user_id.hex).returning('*')   # type: ignore
     try:
         result = await session.execute(statement)
         await session.commit()
         book = result.one()
         return book
     except NoResultFound:
-        raise HTTPException(status_code=404, detail=f'There is no book with this ID: {book_id}')
+        raise HTTPException(status_code=404, detail=f'There is no book with this ID: {book_id} which belongs you')
     
 
 async def get_book_user_id(session: AsyncSession, book_id: UUID):

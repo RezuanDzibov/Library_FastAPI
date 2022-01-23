@@ -51,6 +51,6 @@ async def update_book(
 
 
 @router.delete('/delete/{book_id}')
-async def delete_book(book_id: UUID, session: AsyncSession = Depends(get_session)):
-    book = await book_services.delete_book(session=session, book_id=book_id)
+async def delete_book(book_id: UUID, session: AsyncSession = Depends(get_session), user: User = Depends(current_user)):
+    book = await book_services.delete_book(session=session, book_id=book_id, user_id=user.id)
     return book
