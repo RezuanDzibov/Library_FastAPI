@@ -42,9 +42,9 @@ async def book_image_retrieve(image_id: UUID, session: AsyncSession = Depends(ge
 @router.get('/picture/{image_type}/{image_id}')
 async def book_image_picture_retrieve(image_id: UUID, image_type: ImageType, session: AsyncSession = Depends(get_session)):
     if image_type == ImageType.avatar:
-        image_path = await image_services.get_book_image_picture(session=session, image_id=image_id, image_model=AvatarImage)
+        image_path = await image_services.get_image_picture(session=session, image_id=image_id, image_model=AvatarImage)
     elif image_type == ImageType.book:
-        image_path = await image_services.get_book_image_picture(session=session, image_id=image_id, image_model=BookImage)
+        image_path = await image_services.get_image_picture(session=session, image_id=image_id, image_model=BookImage)
     return FileResponse(image_path)
 
 

@@ -42,7 +42,7 @@ async def insert_book_image(
     return image
 
 
-async def get_book_image_picture(session: AsyncSession, image_id: UUID, image_model: Union[BookImage, AvatarImage]):
+async def get_image_picture(session: AsyncSession, image_id: UUID, image_model: Union[BookImage, AvatarImage]):
     statement = select(image_model).options(load_only(image_model.image_path))   # type: ignore
     statement = statement.where(image_model.id == image_id)
     result = await session.execute(statement)
