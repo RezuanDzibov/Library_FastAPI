@@ -89,7 +89,7 @@ async def avatar_image_retrieve(image_id: UUID, session: AsyncSession = Depends(
     return image
 
 
-@router.delete('/delete/avatar/{image_id}')
+@router.delete('/delete/avatar/{image_id}', response_model=AvatarImageRetrieve)
 async def avatar_image_delete(image_id: UUID, session: AsyncSession = Depends(get_session), user: User = Depends(current_user)):
     book = await image_services.delete_avatar_image(session=session, image_id=image_id, user_id=user.id)
     return book
