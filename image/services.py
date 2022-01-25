@@ -115,3 +115,23 @@ async def insert_avatar_image(
     image = result.one()
     background_tasks.add_task(write_file, filepath, file)
     return image
+
+
+async def get_avatar_image(session: AsyncSession, image_id: UUID):
+    statement = select(AvatarImage).options(   # type: ignore
+        load_only(
+            AvatarImage.id,
+            AvatarImage.user_id,
+            AvatarImage.title,
+            AvatarImage.available,
+            AvatarImage.created
+        )
+    )
+    statement = statement.where(AvatarImage.id == image_id)
+    result = await session.execute(statement)
+    try:
+        image = result.one()
+        image = extract_object(object=image)
+        return image
+    except NoResultFound:
+        raise HTTPException(status_code=404, detail=f'There is no image with this ID: {image_id}')
