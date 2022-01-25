@@ -5,7 +5,6 @@ from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.db import get_session
-import image
 from user.fast_users import fastapi_users
 from user.schemas import User
 from image.schemas import BookImageCreate, BookImageRetrieve, AvatarImageCreate, AvatarImageRetrieve
