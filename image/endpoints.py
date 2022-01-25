@@ -5,6 +5,7 @@ from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.db import get_session
+import image
 from user.fast_users import fastapi_users
 from user.schemas import User
 from image.schemas import BookImageCreate, BookImageRetrieve, AvatarImageCreate, AvatarImageRetrieve
@@ -86,3 +87,9 @@ async def avatar_image_create(
 async def avatar_image_retrieve(image_id: UUID, session: AsyncSession = Depends(get_session)):
     image = await image_services.get_avatar_image(session=session, image_id=image_id)
     return image
+
+
+@router.delete('/delete/avatar/{image_id}')
+async def avatar_image_delete(image_id: UUID, session: AsyncSession = Depends(get_session), user: User = Depends(current_user)):
+    book = await image_services.delete_avatar_image(session=session, image_id=image_id, user_id=user.id)
+    return book
