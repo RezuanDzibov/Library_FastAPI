@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.db import get_session
 from user.fast_users import fastapi_users
 from user.schemas import User
-from image.schemas import BookImageCreate, BookImageRetrieve, AvatarImageCreate
+from image.schemas import BookImageCreate, BookImageRetrieve, AvatarImageCreate, AvatarImageRetrieve
 from image import services as image_services
 from image.models import AvatarImage, BookImage
 from image.dataclasses import ImageType
@@ -33,7 +33,7 @@ async def book_image_create(
     return image
 
 
-@router.get('/{image_id}', response_model=BookImageRetrieve)
+@router.get('/book/{image_id}', response_model=BookImageRetrieve)
 async def book_image_retrieve(image_id: UUID, session: AsyncSession = Depends(get_session)):
     image = await image_services.get_book_image(session=session, image_id=image_id)
     return image
@@ -48,7 +48,7 @@ async def book_image_picture_retrieve(image_id: UUID, image_type: ImageType, ses
     return FileResponse(image_path)
 
 
-@router.delete('/delete/{book_id}/{image_id}', response_model=BookImageRetrieve)
+@router.delete('/delete/book/{book_id}/{image_id}', response_model=BookImageRetrieve)
 async def book_image_delete(
     book_id: UUID,
     image_id: UUID, 
@@ -66,7 +66,7 @@ async def book_image_delete(
     return image
 
 
-@router.post('/avatar/create')
+@router.post('/avatar/create', response_model=AvatarImageRetrieve)
 async def avatar_image_create(
     background_tasks: BackgroundTasks, 
     form: AvatarImageCreate = Depends(AvatarImageCreate.as_form), 

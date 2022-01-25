@@ -6,7 +6,7 @@ from pydantic import BaseModel, PositiveInt, constr
 from typing_extensions import Literal
 
 from user.schemas import UserBook
-from image.schemas import BookImageList
+from image.schemas import ImageList
 
 
 LanguageChoice = Union[
@@ -36,7 +36,7 @@ class BookRetrieve(BookList):
     language: str
     pages: int
     user: UserBook
-    images: List[BookImageList]
+    images: List[ImageList]
 
 
 class BookCreateIn(BaseModel):
