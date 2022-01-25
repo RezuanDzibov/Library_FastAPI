@@ -80,3 +80,9 @@ async def avatar_image_create(
         user_id=str(user.id)
     )
     return image
+
+
+@router.get('/avatar/{image_id}', response_model=AvatarImageRetrieve)
+async def avatar_image_retrieve(image_id: UUID, session: AsyncSession = Depends(get_session)):
+    image = await image_services.get_avatar_image(session=session, image_id=image_id)
+    return image
