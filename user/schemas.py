@@ -9,6 +9,7 @@ class AdditionalUser(BaseModel):
     first_name: str
     last_name: str
     born_date: datetime.date
+    current_avatar_id: UUID
 
     class Config:
         allow_mutation = True
