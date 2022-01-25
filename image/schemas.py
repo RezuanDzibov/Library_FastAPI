@@ -8,7 +8,7 @@ class BaseImageRetrieve(BaseModel):
     id: UUID4
     title: constr(max_length=255)   # type: ignore
     available: bool
-    created: datetime
+    created_at: datetime
     
     class Config:
         orm_mode = True

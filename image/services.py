@@ -33,7 +33,7 @@ async def insert_book_image(
         BookImage.book_id, 
         BookImage.title,
         BookImage.available, 
-        BookImage.created
+        BookImage.created_at
     )
     result = await session.execute(statement)
     await session.commit()
@@ -62,7 +62,7 @@ async def get_book_image(session: AsyncSession, image_id: UUID):
             BookImage.book_id,
             BookImage.title,
             BookImage.available,
-            BookImage.created
+            BookImage.created_at
         )
     )
     statement = statement.where(BookImage.id == image_id)
@@ -108,7 +108,7 @@ async def insert_avatar_image(
         AvatarImage.user_id, 
         AvatarImage.title,
         AvatarImage.available, 
-        AvatarImage.created
+        AvatarImage.created_at
     )
     result = await session.execute(statement)
     await session.commit()
@@ -124,7 +124,7 @@ async def get_avatar_image(session: AsyncSession, image_id: UUID):
             AvatarImage.user_id,
             AvatarImage.title,
             AvatarImage.available,
-            AvatarImage.created
+            AvatarImage.created_at
         )
     )
     statement = statement.where(AvatarImage.id == image_id)
@@ -143,7 +143,7 @@ async def delete_avatar_image(session: AsyncSession, image_id: UUID, user_id: UU
         AvatarImage.user_id,
         AvatarImage.title,
         AvatarImage.available,
-        AvatarImage.created
+        AvatarImage.created_at
     )
     try:
         result = await session.execute(statement)

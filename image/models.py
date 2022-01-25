@@ -17,7 +17,7 @@ from core.models import UUIDMixin
 class ImageMixin:
     title = Column(String(length=255))
     available = Column(Boolean, default=True)
-    created = Column(DateTime, default=datetime.now) # TODO created_at
+    created_at = Column(DateTime, default=datetime.now)
     image_path = Column(String)
 
 
