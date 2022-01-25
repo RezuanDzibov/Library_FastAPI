@@ -135,3 +135,20 @@ async def get_avatar_image(session: AsyncSession, image_id: UUID):
         return image
     except NoResultFound:
         raise HTTPException(status_code=404, detail=f'There is no image with this ID: {image_id}')
+
+
+async def delete_avatar_image(session: AsyncSession, image_id: UUID, user_id: UUID):
+    statement = delete(AvatarImage).where(AvatarImage.id == image_id, AvatarImage.user_id == user_id.hex).returning(   # type: ignore
+        AvatarImage.id,
+        AvatarImage.user_id,
+        AvatarImage.title,
+        AvatarImage.available,
+        AvatarImage.created
+    )
+    try:
+        result = await session.execute(statement)
+        await session.commit()
+        image = result.one()
+        return image
+    except NoResultFound:
+        raise HTTPException(status_code=404, detail=f'There is no image with this ID: {image_id} which belongs you')
