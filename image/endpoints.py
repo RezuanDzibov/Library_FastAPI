@@ -24,12 +24,8 @@ async def book_image_create(
     session: AsyncSession = Depends(get_session),
     user: User = Depends(current_user)
 ):
-    image = await image_services.insert_book_image(
-        session=session, 
-        background_tasks=background_tasks, 
-        form=form,
-        user_id=str(user.id)
-    )
+    service = image_services.InsertBookImage()
+    image = await service(session=session, background_tasks=background_tasks, form=form, user_id=str(user.id))
     return image
 
 
